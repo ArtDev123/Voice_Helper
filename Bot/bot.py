@@ -2,18 +2,15 @@ import asyncio
 import logging
 from aiogram import Bot, Dispatcher
 
-from core.settings import settings
+from core.create_bot import bot, dp
 
-from core.handlers import start
-
+from core.handlers import voice
 
 logging.basicConfig(level=logging.INFO)
 
 async def main():
-    bot = Bot(token=settings.bots.bot_token)
 
-    dp = Dispatcher()
-    dp.include_router(start.router)
+    dp.include_router(voice.router)
      
     try:
         await bot.delete_webhook(drop_pending_updates=True)
