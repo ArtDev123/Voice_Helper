@@ -49,6 +49,8 @@ async def answer(callback: CallbackQuery, state: FSMContext):
     answer_text = answer.data[-1].content[0].text.value
     await state.update_data(answer = answer_text)
     await callback.message.answer(f"{answer_text}", reply_markup=get_tts_kb())
+    await state.set_state(StepsForm.VOICE)
+
 
 @router.callback_query(F.data == "text", StepsForm.CHOOSE_ACTION)
 async def get_text(callback: CallbackQuery, state: FSMContext):
@@ -56,7 +58,7 @@ async def get_text(callback: CallbackQuery, state: FSMContext):
     text = user_data['text']
     await callback.message.answer(f"{text}")
 
-@router.callback_query(F.data == "voice")
+@router.callback_query(F.data == "voice", StepsForm.VOICE)
 async def voice(callback: CallbackQuery, state: FSMContext):
     try:
         user_data = await state.get_data()
@@ -65,6 +67,7 @@ async def voice(callback: CallbackQuery, state: FSMContext):
         await OpenaiService.text_to_speech(answer, file_path)
         audio = FSInputFile(file_path)
         await callback.message.answer_voice(voice=audio)
+        await state.clear()
     finally:
         remove_file(file_path)
 

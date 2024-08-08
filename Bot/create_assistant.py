@@ -5,4 +5,5 @@ async def create():
     assistant = await OpenaiService.create_assistant()
     print(assistant)
 
-asyncio.run(create())
+if __name__ == "__main__":
+    asyncio.run(create())
